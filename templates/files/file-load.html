@@ -1,0 +1,23 @@
+{% extends 'base/interface.html' %}
+
+{% load static %}
+
+{% block add-css %}
+    <link rel="stylesheet" href="{% static 'css/files/common.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="register-card">
+        <h1>Load file</h1>
+        <form enctype="multipart/form-data" method="post" action="{% url 'file-load' %}">
+        {% csrf_token %}
+            <div  class="input-section">
+                <input type="file" name="file" required="required">
+            </div>
+            <hr>
+            <div  class="input-section">
+                <input type="submit">
+            </div>
+        </form>
+    </div>
+{% endblock %}

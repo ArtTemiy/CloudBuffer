@@ -1,0 +1,14 @@
+.profile-card {
+    width: max-content;
+    text-align: left;
+    margin: auto;
+}
+
+p {
+    margin-bottom: 0.5rem;
+}
+
+h2 {
+    margin-top: 0.5rem;
+    margin-left: 0.2rem;
+}

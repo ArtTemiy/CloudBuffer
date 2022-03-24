@@ -1,0 +1,35 @@
+{% extends "base/interface.html" %}
+{% load static %}
+
+{% block add-css %}
+    <link rel="stylesheet" href="{% static "css/accounts/common.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="register-card">
+        <h1>Log In</h1>
+        <form class="register-form" onsubmit="try_login(); return false;" id="loginForm">
+            {% csrf_token %}
+            <div class="input-section"><label>
+                <div class="form-text"><span>E-mail:</span></div>
+                <div><input class="input-form-field" type="text" name="username"></div>
+            </label></div>
+            <div class="input-section"><label>
+                <div class="form-text"><span>Password:</span></div>
+                <div><input class="input-form-field" type="password" name="password"></div>
+            </label></div>
+            <hr>
+            <div class="input-section">
+                <input type="submit" value="Log In" class="submit-button">
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block add-js %}
+    <script>
+        const LOGIN_REQUEST_URL = "{% url 'login' %}";
+        const LOGIN_SUCCESS_URL = "{% url 'login-done' %}";
+    </script>
+    <script src="{% static "js/accounts/login.js" %}"></script>
+{% endblock %}

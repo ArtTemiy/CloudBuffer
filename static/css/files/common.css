@@ -1,0 +1,67 @@
+.content {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.register-card {
+    background-color: #fafafa;
+    padding: 1rem 3.5rem 2rem;
+    width: max-content;
+    height: max-content;
+    min-width: 300px;
+    text-align: center;
+    border: 10px gray;
+    border-radius: 0.3rem;
+    margin: auto;
+}
+
+label {
+    text-align: left;
+}
+
+.register-form {
+    height: max-content;
+}
+
+.form-text {
+    margin-right: 2%;
+    font-size: 1rem;
+    padding: 0.5rem 0;
+}
+
+.input-form-field {
+    width: 100%;
+    display: inline;
+    text-align: left;
+    height: 2.5rem;
+    padding: 0.3rem;
+}
+
+.input-section {
+    padding: 0.5rem;
+    height: max-content;
+}
+
+.submit-button {
+    background-color: #ffe08f;
+    border: 1px;
+    padding: 0.5rem 1rem;
+    border-radius: 0.3rem;
+    font-size: 1.2rem;
+}
+
+input {
+    border: none;
+    border-radius: 0.3rem;
+    background-color: #ffe08f;
+}
+
+/*input[type="file"] {*/
+/*    display: none;*/
+/*}*/
+
+.file-upload-input {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}

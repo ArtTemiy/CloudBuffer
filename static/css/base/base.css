@@ -1,0 +1,75 @@
+body {
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+    background-color: navajowhite;
+    text-align: center;
+}
+
+.header_logo_text {
+    width: max-content;
+    height: 100%;
+    margin: auto;
+    background-color: red;
+}
+
+.header_name_text {
+    text-align: center;
+}
+
+.header {
+    padding: 0.5rem;
+    height: 2rem;
+    background-color: #fafafa;
+    border-radius: 0.3rem;
+}
+
+.content {
+    border-radius: 0.3rem;
+    padding: 2rem;
+    text-align: center;
+    min-height: 100%;
+    background-color: white;
+    margin: 1rem;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+hr {
+    color: black;
+    opacity: 20%;
+    background-color: black;
+    height: 1px;
+    border: none;
+    width: 50%;
+}
+
+button {
+    border-radius: 0.3rem;
+    border: 0;
+    background-color: #ffe08f;
+    height: 100%;
+    margin: 0 0.3rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 1rem;
+}
+
+button:hover {
+    /*background-color: #dbb85b;*/
+    background-color: #ecc96d;
+}
+
+.header-button {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.account-button {
+    float: right;
+}
+
+.home-button {
+    float: left;
+}

@@ -1,0 +1,27 @@
+{% extends "base/interface.html" %}
+{% load static %}
+
+{% block add-css %}
+    <link rel="stylesheet" href="{% static "css/accounts/common.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="register-card">
+        <h4>Are you sure you want to log out?</h4>
+        <form class="register-form" method="post" action="{% url "logout" %}">
+            {% csrf_token %}
+            <hr>
+            <div class="input-section">
+                <input type="submit" value="Log Out" class="submit-button">
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block add-js %}
+    <script>
+        const LOGOUT_REQUEST_URL = "{% url 'logout' %}";
+        const LOGOUT_SUCCESS_URL = "{% url 'logout-done' %}";
+    </script>
+    <script src="{% static "js/accounts/logout.js" %}"></script>
+{% endblock %}

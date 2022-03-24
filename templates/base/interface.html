@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static "css/base/base.css" %}" >
+    {% block add-css %}
+    {% endblock %}
+</head>
+<body>
+    <div class="header">
+        <button class="header-button home-button" type="button" onclick="go_to_page('{% url 'home' %}')">Home</button>
+        <button class="header-button home-button" type="button" onclick="go_to_page('{% url 'file-load' %}')">Load File</button>
+        {% if username %}
+            <button class="header-button account-button" type="button" onclick="go_to_page('{% url 'profile' %}')">Profile</button>
+            <button class="header-button account-button" type="button" onclick="go_to_page('{% url 'logout' %}')">Log out</button>
+        {% else %}
+            <button class="header-button account-button" type="button" onclick="go_to_page('{% url 'login' %}')">Log In</button>
+            <button class="header-button account-button" type="button" onclick="go_to_page('{% url 'register' %}')">Register</button>
+        {% endif %}
+    </div>
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+
+    <!-- js -->
+    <script>
+    </script>
+    <script src="{% static 'js/base/interface.js' %}"></script>
+    {% block add-js %}
+    {% endblock %}
+</body>
+</html>

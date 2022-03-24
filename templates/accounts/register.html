@@ -1,0 +1,43 @@
+{% extends "base/interface.html" %}
+{% load static %}
+
+{% block add-css %}
+    <link rel="stylesheet" href="{% static "css/accounts/common.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="register-card">
+        <h1>Register</h1>
+        <form class="register-form" onsubmit="try_register(); return false;" id="registerForm">
+            {% csrf_token %}
+            <div class="input-section"><label>
+                <div class="form-text"><span>Username:</span></div>
+                <div><input class="input-form-field" type="text" name="username"></div>
+            </label></div>
+            <div class="input-section"><label>
+                <div class="form-text"><span>E-mail:</span></div>
+                <div><input class="input-form-field" type="email" name="email"></div>
+            </label></div>
+            <div class="input-section"><label>
+                <div class="form-text"><span>Password:</span></div>
+                <div><input class="input-form-field" type="password" name="password"></div>
+            </label></div>
+            <div class="input-section"><label>
+                <div class="form-text"><span>Confirm password:</span></div>
+                <div><input class="input-form-field" type="password" name="password_confirm"></div>
+            </label></div>
+            <hr>
+            <div class="input-section">
+                <input type="submit" value="Register" class="submit-button">
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block add-js %}
+    <script>
+        const REGISTER_REQUEST_URL = "{% url 'register' %}";
+        const REGISTER_SUCCESS_URL = "{% url 'register-done' %}";
+    </script>
+    <script src="{% static "js/accounts/register.js" %}"></script>
+{% endblock %}

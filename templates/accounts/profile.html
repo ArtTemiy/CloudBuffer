@@ -1,0 +1,17 @@
+{% extends 'base/interface.html' %}
+
+{% block add-css %}
+    {%  load static %}
+    <link rel="stylesheet" href="{% static 'css/accounts/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="profile-card">
+        <p>Username:</p>
+        <h2>{{ user.username }}</h2>
+        <br>
+        <p>Email:</p>
+        <h2>{{ user.email }}</h2>
+    </div>
+
+{% endblock %}
