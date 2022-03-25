@@ -1,15 +1,13 @@
-from django.views import View
-from django.views.decorators.http import require_GET, require_POST
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.http.response import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import render
-
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
+from django.views.decorators.http import require_GET
 
 from utils.views_helpers import render_view
-
 from .forms import RegisterForm, LoginForm
 from .models import Account
 
@@ -53,9 +51,7 @@ class LogInView(View):
             return HttpResponseBadRequest(form.errors)
         data = form.cleaned_data
         if len(User.objects.filter(username=data['username'])) > 0:
-            print(data['username'], data['password'])
             user = authenticate(username=data['username'], password=data['password'])
-            print(user)
             if user is not None:
                 login(request, user)
                 return HttpResponse('', status=200)

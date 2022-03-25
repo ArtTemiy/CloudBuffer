@@ -4,12 +4,12 @@
 {% block content %}
     <p> File was uploaded: {{ file_id }} </p>
     <div class="qrcode" id="qrcode"></div>
-    <p><a href="{% url 'file-qr'%}?token={{ token }}">Download: </a></p>
+    <p><a href="{% url 'file-get' %}?token={{ token }}">Download: </a></p>
 {% endblock %}
 
 {% block add-js %}
     <script src="{% static 'js/files/qrcode.min.js' %}"></script>
     <script type="text/javascript">
-    new QRCode(document.getElementById("qrcode"), "{{ site_url }}{% url 'file-qr'%}?token={{ token }}");
+        new QRCode(document.getElementById("qrcode"), "{{ site_url }}{% url 'file-get'%}?token={{ token }}");
     </script>
 {% endblock %}

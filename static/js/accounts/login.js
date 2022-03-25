@@ -6,7 +6,11 @@ function get_form_data() {
 
 const urlParams = new URLSearchParams(window.location.search);
 const nextUrlParam = urlParams.get('next');
-const urlOnSuccess = nextUrlParam === "" ? LOGIN_SUCCESS_URL : nextUrlParam;
+const nextUrlParamIsValid =
+    nextUrlParam === "" ||
+    nextUrlParam === undefined ||
+    nextUrlParam === null;
+const urlOnSuccess = nextUrlParamIsValid ? LOGIN_SUCCESS_URL : nextUrlParam;
 
 function try_login() {
     let form_data = get_form_data();

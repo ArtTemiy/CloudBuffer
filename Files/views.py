@@ -1,24 +1,18 @@
 import datetime
-import os
 
+import redis
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
-from django.shortcuts import render, get_object_or_404
+from django.http.response import HttpResponseBadRequest, FileResponse
+from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
-from django.http.response import HttpResponseBadRequest, HttpResponse, HttpResponseNotFound, FileResponse
-
-from Accounts.models import Account
-from .models import File
-from .forms import FileLoadForm
-from .utils import gen_code
-from utils.views_helpers import render_class_view_method, get_account, context_wrap
 
 import CloudBuffer.config as config
 import CloudBuffer.settings as settings
-import redis
-
+from utils.views_helpers import render_class_view_method, get_account, context_wrap
+from .forms import FileLoadForm
+from .models import File
+from .utils import gen_code, get_file_path
 
 redis_cli = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
 
@@ -31,7 +25,7 @@ class FileView(View):
         return HttpResponseBadRequest()
 
 
-class FileQRCode(View):
+class FileGet(View):
     def get(self, request):
         token = request.GET['token']
         print(f'token is {token}')
@@ -40,11 +34,12 @@ class FileQRCode(View):
         print(f'file id is {file_id}')
         if not file_id:
             return HttpResponseBadRequest()
-        file = File.objects.get(pk=file_id)
-        if file.expire < timezone.now():
+        file_db_object = File.objects.get(pk=file_id)
+        if file_db_object.expire < timezone.now():
+            file_db_object.delete()
             return HttpResponseBadRequest()
-        print(file.file.read())
-        return FileResponse(open(file.file.path, 'rb'))
+        print(file_db_object.file_path)
+        return FileResponse(open(file_db_object.file_path, 'rb'), filename=file_db_object.file_name)
 
 
 class FileLoadView(LoginRequiredMixin, View):
@@ -61,42 +56,47 @@ class FileLoadView(LoginRequiredMixin, View):
             return HttpResponseBadRequest(form.errors)
 
         # get account
-        file = request.FILES['file']
+        request_file = request.FILES['file']
         account = get_account(request)
 
-        # create file ()
-        new_file = File(account=account, expire=datetime.datetime.now() + config.EXPIRE_TIME)
-        new_file.save()
-
         # get file data
-        file_content = file.read()
+        file_content = request_file.read()
 
         # generate token
         token = gen_code()
+        file_path = get_file_path(account, token)
+        # file_path = f'{account.user.username}__{file.name}__{token}'
+        file = open(file_path, 'wb+')
+        file.write(file_content)
+        file.close()
 
-        # TODO make it unique to allow several files with same names
-        file_name = f'{token}__{file.name}'
+        # create file object in db
+        new_file = File(
+            account=account,
+            expire=datetime.datetime.now() + config.EXPIRE_TIME,
+            file_path=file_path,
+            file_name=request_file.name,
+        )
+        new_file.save()
 
-        print(f'file was saved in path {file_name} with size {len(file_content)}b')
-
-        # save file
-        '''new_file.file.save(file_name, ContentFile(file_content))'''
+        print(f'file was saved in path {file_path} with size {len(file_content)}b')
 
         # clear old files
-        '''while File.objects.filter(account=account).count() > config.MAX_FILES:
+        while File.objects.filter(account=account).count() > config.MAX_FILES:
             file_to_clear = File.objects.filter(account=account).order_by('expire').first()
-            print(f'file to clear: {file_to_clear.file.path}')
+            print(f'file to clear: {file_to_clear.file_path}')
             file_to_clear.delete()
-        file_id = new_file.pk'''
+            # TODO rm file in system
+        file_id = new_file.pk
 
-        print(new_file.file.path, new_file.file.read())
+        print(new_file.file_path)
 
         # save token to redis
         while redis_cli.exists(token):
             token = gen_code()
         redis_cli.set(token, new_file.pk, config.EXPIRE_TIME.seconds)
 
-        return render(request, 'files/file-qr.html', context_wrap(request, {
+        return render(request, 'files/file-get.html', context_wrap(request, {
             'Title': 'File QR-code',
             'file_id': file_id,
             'token': token,

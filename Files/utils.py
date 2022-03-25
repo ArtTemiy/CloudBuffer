@@ -1,5 +1,6 @@
 import random
 
+from CloudBuffer.settings import MEDIA_ROOT
 
 ALPHABET = list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890')
 
@@ -18,3 +19,8 @@ def gen_code_unique(size=64):
 
     gened_codes.add(new_code)
     return new_code
+
+
+def get_file_path(account, token):
+    file_name = f'{account.user.username}__{token}'
+    return f'{MEDIA_ROOT}/{file_name}'
