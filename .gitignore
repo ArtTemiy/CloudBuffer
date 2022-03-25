@@ -1,6 +1,9 @@
 # Custom
 user_files/*
 
+# Redis snapshots
+dump.rdb
+
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
 # Byte-compiled / optimized / DLL files

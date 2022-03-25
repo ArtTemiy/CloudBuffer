@@ -1,4 +1,5 @@
 import datetime
+import json
 
 import redis
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,10 +10,11 @@ from django.views import View
 
 import CloudBuffer.config as config
 import CloudBuffer.settings as settings
+from Files.models.models import File
+from Files.utils.token_generator import token_generator
+from Files.utils.utils import get_file_path
 from utils.views_helpers import render_class_view_method, get_account, context_wrap
 from .forms import FileLoadForm
-from .models import File
-from .utils import gen_code, get_file_path
 
 redis_cli = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
 
@@ -38,8 +40,12 @@ class FileGet(View):
         if file_db_object.expire < timezone.now():
             file_db_object.delete()
             return HttpResponseBadRequest()
-        print(file_db_object.file_path)
-        return FileResponse(open(file_db_object.file_path, 'rb'), filename=file_db_object.file_name)
+        print(file_db_object.get_file_path())
+        if file_db_object.type != file_db_object.FILE_TYPE:
+            return HttpResponseBadRequest()
+
+        filename = json.loads(file_db_object.metadata)['filename']
+        return FileResponse(open(file_db_object.get_file_path(), 'rb'), filename=filename)
 
 
 class FileLoadView(LoginRequiredMixin, View):
@@ -63,7 +69,7 @@ class FileLoadView(LoginRequiredMixin, View):
         file_content = request_file.read()
 
         # generate token
-        token = gen_code()
+        token = token_generator.gen_code()
         file_path = get_file_path(account, token)
         # file_path = f'{account.user.username}__{file.name}__{token}'
         file = open(file_path, 'wb+')
@@ -74,8 +80,11 @@ class FileLoadView(LoginRequiredMixin, View):
         new_file = File(
             account=account,
             expire=datetime.datetime.now() + config.EXPIRE_TIME,
-            file_path=file_path,
-            file_name=request_file.name,
+            token=token,
+            type=File.FILE_TYPE,
+            metadata=json.dumps({
+                'filename': request_file.name
+            }),
         )
         new_file.save()
 
@@ -84,16 +93,13 @@ class FileLoadView(LoginRequiredMixin, View):
         # clear old files
         while File.objects.filter(account=account).count() > config.MAX_FILES:
             file_to_clear = File.objects.filter(account=account).order_by('expire').first()
-            print(f'file to clear: {file_to_clear.file_path}')
+            print(f'file to clear: {file_to_clear.get_file_path()}')
             file_to_clear.delete()
-            # TODO rm file in system
         file_id = new_file.pk
 
-        print(new_file.file_path)
+        print(new_file.get_file_path())
 
         # save token to redis
-        while redis_cli.exists(token):
-            token = gen_code()
         redis_cli.set(token, new_file.pk, config.EXPIRE_TIME.seconds)
 
         return render(request, 'files/file-get.html', context_wrap(request, {
