@@ -43,7 +43,7 @@ class BufferViewTest(TestCase):
         response = self.client.get(reverse('buffer'))
         assert_eq(response.status_code, 200)
         assert_eq(response.headers['X-Data-Type'], 'file')
-        assert_eq(response.headers['Content-Disposition'], 'inline; filename="file-name.ext"')
+        assert_eq(response.headers['Content-Disposition'], 'attachment; filename="file-name.ext"')
         assert_eq(b''.join(response.streaming_content), self.test_string)
 
     def test_post_text(self):

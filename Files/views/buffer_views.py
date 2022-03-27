@@ -101,6 +101,7 @@ class BufferView(LoginRequiredMixin, View):
         return FileResponse(
             open(file_db_object.get_file_path(), 'rb'),
             filename=filename,
+            as_attachment=True,
             headers={
                 self.DATA_TYPE_HEADER: data_type_header
             }
