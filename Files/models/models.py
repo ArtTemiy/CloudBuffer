@@ -5,6 +5,7 @@ from django.db import models
 from jsonschema import validate as validate_json
 
 from Accounts.models import Account
+from CloudBuffer import config
 from Files.models.schemas_storage import get_file_validation_schema
 from Files.utils.token_generator import token_generator
 from Files.utils.utils import get_file_path
@@ -42,3 +43,10 @@ class File(models.Model):
             os.remove(self.get_file_path())
         token_generator.remove_code(self.token)
         super().delete(using=using, keep_parents=keep_parents)
+
+
+def clear_expired_files(account):
+    while File.objects.filter(account=account).count() > config.MAX_FILES:
+        file_to_clear = File.objects.filter(account=account).order_by('expire').first()
+        print(f'file to clear: {file_to_clear.get_file_path()}')
+        file_to_clear.delete()

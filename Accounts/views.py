@@ -26,7 +26,7 @@ class RegisterView(View):
             if len(User.objects.filter(username=data['username'])) > 0:
                 # TODO - No content on frontend
                 return HttpResponse('User already exists', status=400)
-            new_user = User.objects.create_user(
+            new_user = User.objects.create_account(
                 username=data['username'],
                 email=data['email'],
                 password=data['password']

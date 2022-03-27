@@ -10,11 +10,11 @@ from django.views import View
 
 import CloudBuffer.config as config
 import CloudBuffer.settings as settings
+from Files.forms import FileLoadForm
 from Files.models.models import File
 from Files.utils.token_generator import token_generator
 from Files.utils.utils import get_file_path
 from utils.views_helpers import render_class_view_method, get_account, context_wrap
-from .forms import FileLoadForm
 
 redis_cli = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
 
