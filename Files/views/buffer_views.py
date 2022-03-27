@@ -1,9 +1,9 @@
-import datetime
 import json
 
 import redis
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http.response import FileResponse, JsonResponse
+from django.utils import timezone
 from django.views import View
 
 import CloudBuffer.config as config
@@ -16,8 +16,8 @@ redis_cli = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
 
 
 class BufferView(LoginRequiredMixin, View):
-    # DATA_TYPE_HEADER = 'X-Data-Type'
-    DATA_TYPE_HEADER = 'X_DATA_TYPE'
+    DATA_TYPE_HEADER = 'X-Data-Type'
+    # DATA_TYPE_HEADER = 'X_DATA_TYPE'
     HEADER_FILE_TYPES_BINDINGS = {
         'file': File.FILE_TYPE,
         'text': File.TEXT_TYPE,
@@ -48,6 +48,7 @@ class BufferView(LoginRequiredMixin, View):
         old_file_obj = File.objects.filter(account=account, token=self.TOKEN).first()
 
         request_file = request.FILES['file']
+        request_filename = request_file.name
         data = request_file.read()  # content
         # token = token_generator.gen_code()
         token = self.TOKEN
@@ -60,7 +61,7 @@ class BufferView(LoginRequiredMixin, View):
         data_type = self.HEADER_FILE_TYPES_BINDINGS[data_type_header]
         if data_type == File.FILE_TYPE:
             metadata = {
-                'filename': request_file.name
+                'filename': request_filename
             }
         else:
             pass
@@ -70,7 +71,7 @@ class BufferView(LoginRequiredMixin, View):
 
         new_file = File(
             account=account,
-            expire=datetime.datetime.now() + config.EXPIRE_TIME,
+            expire=timezone.now() + config.EXPIRE_TIME,
             token=token,
             type=data_type,
             metadata=json.dumps(metadata),
@@ -97,9 +98,9 @@ class BufferView(LoginRequiredMixin, View):
         data_type = file_db_object.type
         data_type_header = self.FILE_TYPES_BINDINGS[data_type]
 
-        if data_type_header != File.FILE_TYPE:
+        if data_type_header == File.FILE_TYPE:
             filename = json.loads(file_db_object.metadata)['filename']
-        elif data_type_header != File.TEXT_TYPE:
+        elif data_type_header == File.TEXT_TYPE:
             pass
         return FileResponse(
             open(file_db_object.get_file_path(), 'rb'),
