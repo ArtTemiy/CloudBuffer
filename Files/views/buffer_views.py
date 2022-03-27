@@ -17,7 +17,6 @@ redis_cli = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
 
 class BufferView(LoginRequiredMixin, View):
     DATA_TYPE_HEADER = 'X-Data-Type'
-    # DATA_TYPE_HEADER = 'X_DATA_TYPE'
     HEADER_FILE_TYPES_BINDINGS = {
         'file': File.FILE_TYPE,
         'text': File.TEXT_TYPE,
@@ -50,7 +49,6 @@ class BufferView(LoginRequiredMixin, View):
         request_file = request.FILES['file']
         request_filename = request_file.name
         data = request_file.read()  # content
-        # token = token_generator.gen_code()
         token = self.TOKEN
         file_path = get_file_path(account, token)
         file = open(file_path, 'wb+')
@@ -78,8 +76,6 @@ class BufferView(LoginRequiredMixin, View):
         )
         new_file.save()
         print(f'file was saved in path {file_path} with size {len(data)}b')
-        # file_id = new_file.pk
-        # redis_cli.set(token, new_file.pk, config.EXPIRE_TIME.seconds)
 
         clear_expired_files(account)
 
