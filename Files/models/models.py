@@ -37,16 +37,18 @@ class File(models.Model):
              update_fields=None):
         self.validate()
         super().save(force_insert, force_update, using, update_fields)
+        self.clear_expired_files(self.account)
 
-    def delete(self, using=None, keep_parents=False):
-        if os.path.exists(self.get_file_path()):
-            os.remove(self.get_file_path())
+    def delete(self, using=None, keep_parents=False, delete_file=True):
+        file_path = self.get_file_path()
+        if delete_file and os.path.exists(file_path):
+            os.remove(file_path)
+            print(f'File {file_path} was removed')
         token_generator.remove_code(self.token)
         super().delete(using=using, keep_parents=keep_parents)
 
-
-def clear_expired_files(account):
-    while File.objects.filter(account=account).count() > config.MAX_FILES:
-        file_to_clear = File.objects.filter(account=account).order_by('expire').first()
-        print(f'file to clear: {file_to_clear.get_file_path()}')
-        file_to_clear.delete()
+    def clear_expired_files(self, account):
+        while File.objects.filter(account=account).count() > config.MAX_FILES:
+            file_to_clear = File.objects.filter(account=account).order_by('expire').first()
+            print(f'file to clear: {file_to_clear.get_file_path()}')
+            file_to_clear.delete()

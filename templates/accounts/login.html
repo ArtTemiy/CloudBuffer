@@ -6,10 +6,10 @@
 {% endblock %}
 
 {% block content %}
+    {% csrf_token %}
     <div class="register-card">
         <h1>Log In</h1>
         <form class="register-form" onsubmit="try_login(); return false;" id="loginForm">
-            {% csrf_token %}
             <div class="input-section"><label>
                 <div class="form-text"><span>E-mail:</span></div>
                 <div><input class="input-form-field" type="text" name="username"></div>
