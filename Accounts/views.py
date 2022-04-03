@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -45,9 +47,12 @@ class LogInView(View):
         return render(request, 'accounts/login.html', {})
 
     def post(self, request):
-        form = LoginForm(request.POST)
+        json_body = json.loads(request.body)
+        form = LoginForm(json_body)
         if not form.is_valid():
-            print(form.errors)
+            print(
+                f'Error in form: {form.errors}'
+            )
             return HttpResponseBadRequest(form.errors)
         data = form.cleaned_data
         if len(User.objects.filter(username=data['username'])) > 0:

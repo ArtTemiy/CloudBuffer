@@ -28,6 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 ENDPOINT = '127.0.0.1:8000'
+APPEND_SLASH = False
 
 
 # Application definition
@@ -107,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_URL = 'login'
+LOGIN_URL = '/account/login'
 
 
 # Internationalization

@@ -13,8 +13,10 @@ const nextUrlParamIsValid =
 const urlOnSuccess = nextUrlParamIsValid ? LOGIN_SUCCESS_URL : nextUrlParam;
 
 function try_login() {
-    let form_data = get_form_data();
-    console.log(form_data);
+    let form_data = JSON.stringify(Object.fromEntries(get_form_data()));
+    console.log(
+        form_data
+    );
     let request = new XMLHttpRequest();
     request.open("POST", LOGIN_REQUEST_URL);
     request.onreadystatechange = () => {
@@ -28,5 +30,7 @@ function try_login() {
             window.location.href = urlOnSuccess;
         }
     }
+    request.setRequestHeader("Content-type", "application/json");
+    request.setRequestHeader('X-CSRFToken', CSRF_TOKEN)
     request.send(form_data);
 }
