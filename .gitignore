@@ -2,7 +2,7 @@
 user_files/*
 
 # Redis snapshots
-*dump.rdb
+dump.rdb
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
@@ -16,7 +16,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
+build/`
 develop-eggs/
 dist/
 downloads/
